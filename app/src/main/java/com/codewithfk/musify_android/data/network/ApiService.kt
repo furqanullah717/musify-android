@@ -1,8 +1,10 @@
 package com.codewithfk.musify_android.data.network
 
+import com.codewithfk.musify_android.data.model.CreatePlaylistRequest
 import com.codewithfk.musify_android.data.model.HomeDataResponse
 import com.codewithfk.musify_android.data.model.LoginRequest
 import com.codewithfk.musify_android.data.model.LoginResponse
+import com.codewithfk.musify_android.data.model.PlaylistModel
 import com.codewithfk.musify_android.data.model.RegisterRequest
 import com.codewithfk.musify_android.data.model.Song
 import retrofit2.Response
@@ -32,4 +34,12 @@ interface ApiService {
     suspend fun getSongById(
         @Path("id") id: String
     ): Response<Song>
+
+    @GET("/playlists")
+    suspend fun getPlaylists(): Response<List<PlaylistModel>>
+
+    @POST("/playlists")
+    suspend fun createPlaylist(
+        @Body playlist: CreatePlaylistRequest
+    ): Response<PlaylistModel>
 }

@@ -54,4 +54,10 @@ class HomeViewModel(private val homeRepository: HomeRepository, private  val mus
             _event.emit(HomeEvent.onSongClick(value))
         }
     }
+
+    fun onPlaylistClicked() {
+        viewModelScope.launch {
+            _event.emit(HomeEvent.onPlaylistClick)
+        }
+    }
 }

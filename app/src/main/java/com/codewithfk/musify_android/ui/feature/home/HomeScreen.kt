@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import com.codewithfk.musify_android.data.model.Song
 import com.codewithfk.musify_android.ui.feature.widgets.ErrorScreen
 import com.codewithfk.musify_android.ui.feature.widgets.LoadingScreen
 import com.codewithfk.musify_android.ui.feature.widgets.MusifySpacer
+import com.codewithfk.musify_android.ui.navigation.OpenPlayListRoute
 import com.codewithfk.musify_android.ui.navigation.PlaySongRoute
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
@@ -60,6 +62,9 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
 
                 is HomeEvent.onSongClick -> {
                     navController.navigate(PlaySongRoute(it.songId))
+                }
+                HomeEvent.onPlaylistClick -> {
+                    navController.navigate(OpenPlayListRoute)
                 }
             }
         }
@@ -79,7 +84,10 @@ fun HomeScreen(navController: NavController, viewModel: HomeViewModel = koinView
                 onSongClicked = {
                     viewModel.onSongClicked(it.id)
                 },
-                onAlbumClicked = { }
+                onAlbumClicked = { },
+                onPlaylistButtonClicked = {
+                    viewModel.onPlaylistClicked()
+                }
             )
         }
 
@@ -95,14 +103,15 @@ fun HomeScreenContent(
     name: String,
     data: HomeDataResponse,
     onSongClicked: (Song) -> Unit,
-    onAlbumClicked: (Album) -> Unit
+    onAlbumClicked: (Album) -> Unit,
+    onPlaylistButtonClicked: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        HomeHeader(name, null)
+        HomeHeader(name, null, onPlaylistButtonClicked)
         ContinueListeningSection(data.continueListening, onSongClicked)
         MusifySpacer(16.dp)
         TopMixesSection(data.topMixes) {}
@@ -113,7 +122,7 @@ fun HomeScreenContent(
 }
 
 @Composable
-fun HomeHeader(userName: String, userImage: String?) {
+fun HomeHeader(userName: String, userImage: String?, onPlaylistButtonClicked: () -> Unit) {
 
     Row(
         modifier = Modifier
@@ -156,6 +165,16 @@ fun HomeHeader(userName: String, userImage: String?) {
                 style = MaterialTheme.typography.labelMedium
             )
         }
+        Spacer(modifier = Modifier.weight(1f))
+        Image(
+            painter = painterResource(androidx.media3.session.R.drawable.media3_icon_playlist_add),
+            contentDescription = null,
+            modifier = Modifier
+                .size(24.dp)
+                .clickable {
+                    onPlaylistButtonClicked.invoke()
+                }
+        )
     }
 }
 
@@ -208,7 +227,7 @@ fun GridSong(song: Song, modifier: Modifier, onClick: (Song) -> Unit) {
 @Preview
 @Composable
 fun PreviewHomeHeader() {
-    HomeHeader("John Doe", "https://example.com/user.jpg")
+    HomeHeader("John Doe", "https://example.com/user.jpg", {})
 }
 
 @Composable

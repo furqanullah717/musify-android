@@ -8,9 +8,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.codewithfk.musify_android.data.model.CreatePlaylistRequest
 import com.codewithfk.musify_android.ui.feature.home.HomeScreen
 import com.codewithfk.musify_android.ui.feature.login.LoginScreen
 import com.codewithfk.musify_android.ui.feature.onboarding.OnboardingScreen
+import com.codewithfk.musify_android.ui.feature.playlist.ListPlaylistScreen
+import com.codewithfk.musify_android.ui.feature.playlist.add_playlist.CreatePlaylistScreen
 import com.codewithfk.musify_android.ui.feature.playsong.PlaySongScreen
 import com.codewithfk.musify_android.ui.feature.register.RegisterScreen
 
@@ -36,6 +39,12 @@ fun AppNavGraph(navController: NavHostController, startDestination: MusifyNavRou
         composable<PlaySongRoute> {
             val route = it.toRoute<PlaySongRoute>()
             PlaySongScreen(route.id, navController)
+        }
+        composable<OpenPlayListRoute> {
+            ListPlaylistScreen(navController)
+        }
+        composable<CreatePlayListRoute> {
+            CreatePlaylistScreen(navController)
         }
     }
 }
