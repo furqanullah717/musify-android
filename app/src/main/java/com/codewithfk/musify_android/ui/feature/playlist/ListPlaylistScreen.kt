@@ -29,6 +29,7 @@ import com.codewithfk.musify_android.data.model.PlaylistModel
 import com.codewithfk.musify_android.ui.feature.widgets.ErrorScreen
 import com.codewithfk.musify_android.ui.feature.widgets.LoadingScreen
 import com.codewithfk.musify_android.ui.navigation.CreatePlayListRoute
+import com.codewithfk.musify_android.ui.navigation.PlaylistDetailsRoute
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -45,10 +46,14 @@ fun ListPlaylistScreen(
                     Toast.makeText(navController.context, it.message, Toast.LENGTH_SHORT).show()
                 }
 
-                ListPlaylistEvent.createPlaylist -> {
+                is ListPlaylistEvent.createPlaylist -> {
                     navController.navigate(CreatePlayListRoute) {
                         restoreState = true
                     }
+                }
+
+                is ListPlaylistEvent.navigateToPlaylistDetails -> {
+                    navController.navigate(PlaylistDetailsRoute(it.playListID))
                 }
             }
         }
@@ -94,7 +99,7 @@ fun ListPlaylistScreen(
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(data) { playlistModel: PlaylistModel ->
                             PlaylistItem(playlistModel) {
-
+                                viewModel.onPlayListItemClicked(playlistModel.id)
                             }
                         }
                     }
@@ -120,13 +125,13 @@ fun PlaylistItem(playlistModel: PlaylistModel, onItemClick: () -> Unit) {
             .padding(8.dp)
     ) {
         val iamge = getImageFromPlaylist(playlistModel)
-        if(iamge!=null){
+        if (iamge != null) {
             AsyncImage(
                 model = getImageFromPlaylist(playlistModel),
                 contentDescription = "Playlist Cover",
                 modifier = Modifier.size(60.dp)
             )
-        }else{
+        } else {
             Image(
                 painter = painterResource(R.drawable.ic_profile),
                 contentDescription = "Playlist Cover",
@@ -141,7 +146,7 @@ fun PlaylistItem(playlistModel: PlaylistModel, onItemClick: () -> Unit) {
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "${playlistModel.songs?.size?:0} songs",
+                text = "${playlistModel.songCount} songs",
                 modifier = Modifier.padding(start = 8.dp)
             )
         }
@@ -151,7 +156,7 @@ fun PlaylistItem(playlistModel: PlaylistModel, onItemClick: () -> Unit) {
 
 fun getImageFromPlaylist(playlistModel: PlaylistModel): String? {
     val imageUrl = playlistModel.coverImage
-    val songImage = if(playlistModel.songs?.isNotEmpty()==true) {
+    val songImage = if (playlistModel.songs?.isNotEmpty() == true) {
         playlistModel.songs[0].coverImage
     } else {
         imageUrl

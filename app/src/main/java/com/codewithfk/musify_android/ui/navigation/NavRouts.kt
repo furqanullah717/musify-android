@@ -18,6 +18,8 @@ object HomeRoute : MusifyNavRoute
 
 @Serializable
 data class PlaySongRoute(val id: String) : MusifyNavRoute
+@Serializable
+data class PlaylistDetailsRoute(val id: String) : MusifyNavRoute
 
 @Serializable
 object OpenPlayListRoute : MusifyNavRoute

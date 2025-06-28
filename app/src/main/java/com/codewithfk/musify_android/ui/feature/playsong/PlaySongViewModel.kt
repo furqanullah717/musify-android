@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.codewithfk.musify_android.data.model.Song
 import com.codewithfk.musify_android.data.network.Resource
 import com.codewithfk.musify_android.data.repository.MusicRepository
+import com.codewithfk.musify_android.data.repository.PlaylistRepository
 import com.codewithfk.musify_android.data.service.MusifyPlaybackService
 import com.codewithfk.musify_android.data.service.MusifyPlaybackService.Companion.KEY_SONG
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,7 +23,11 @@ import kotlinx.coroutines.launch
 import org.koin.android.annotation.KoinViewModel
 
 @KoinViewModel
-class PlaySongViewModel(private val repo: MusicRepository, private val context: Context) :
+class PlaySongViewModel(
+    private val repo: MusicRepository,
+    private val context: Context,
+    val playlistRepository: PlaylistRepository
+) :
     ViewModel() {
 
     private val _state = MutableStateFlow<PlaySongState>(PlaySongState.Loading)
@@ -123,6 +128,48 @@ class PlaySongViewModel(private val repo: MusicRepository, private val context: 
                 Context.BIND_AUTO_CREATE
             )
         }
+    }
+
+    fun onAddToPlaylistClicked(songID: String) {
+        viewModelScope.launch {
+            val list = playlistRepository.getPlaylists()
+            when (list) {
+                is Resource.Success -> {
+                    if (list.data.isEmpty()) {
+                        _event.emit(PlaySongEvent.showErrorMessage("No playlists available"))
+                    } else {
+                        _event.emit(PlaySongEvent.showPlaylistSelection(list.data))
+                    }
+                }
+
+                is Resource.Error -> {
+                    _event.emit(
+                        PlaySongEvent.showErrorMessage(
+                            list.message ?: "Failed to fetch playlists"
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun addSongToPlaylist(playListID: String, songID: String) {
+       viewModelScope.launch {
+
+            val response = playlistRepository.addSongToPlaylist(playListID, songID)
+            when (response) {
+                is Resource.Success -> {
+                    _event.emit(PlaySongEvent.showErrorMessage("Song added to playlist successfully"))
+                }
+                is Resource.Error -> {
+                    _event.emit(
+                        PlaySongEvent.showErrorMessage(
+                            response.message ?: "Failed to add song to playlist"
+                        )
+                    )
+                }
+            }
+       }
     }
 
 }

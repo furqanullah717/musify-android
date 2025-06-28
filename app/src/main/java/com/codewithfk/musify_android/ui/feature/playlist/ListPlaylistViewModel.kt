@@ -1,5 +1,6 @@
 package com.codewithfk.musify_android.ui.feature.playlist
 
+import android.adservices.adid.AdId
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.codewithfk.musify_android.data.network.Resource
@@ -56,6 +57,12 @@ class ListPlaylistViewModel(private val playlistRepository: PlaylistRepository) 
 
     fun retry() {
         fetchData()
+    }
+
+    fun onPlayListItemClicked(playlistId: String) {
+        viewModelScope.launch {
+            _event.emit(ListPlaylistEvent.navigateToPlaylistDetails(playlistId))
+        }
     }
 
 }

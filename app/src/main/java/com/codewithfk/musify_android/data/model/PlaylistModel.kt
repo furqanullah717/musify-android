@@ -7,6 +7,7 @@ data class PlaylistModel(
     val coverImage: String?,
     val userId: String,
     val songs: List<Song>? = emptyList(),
+    val songCount: Int? = 0,
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis()
 )

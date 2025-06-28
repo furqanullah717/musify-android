@@ -14,6 +14,7 @@ import com.codewithfk.musify_android.ui.feature.login.LoginScreen
 import com.codewithfk.musify_android.ui.feature.onboarding.OnboardingScreen
 import com.codewithfk.musify_android.ui.feature.playlist.ListPlaylistScreen
 import com.codewithfk.musify_android.ui.feature.playlist.add_playlist.CreatePlaylistScreen
+import com.codewithfk.musify_android.ui.feature.playlist.playlist_details.PlaylistDetailsScreen
 import com.codewithfk.musify_android.ui.feature.playsong.PlaySongScreen
 import com.codewithfk.musify_android.ui.feature.register.RegisterScreen
 
@@ -39,6 +40,10 @@ fun AppNavGraph(navController: NavHostController, startDestination: MusifyNavRou
         composable<PlaySongRoute> {
             val route = it.toRoute<PlaySongRoute>()
             PlaySongScreen(route.id, navController)
+        }
+        composable<PlaylistDetailsRoute> {
+            val route = it.toRoute<PlaylistDetailsRoute>()
+            PlaylistDetailsScreen(route.id, navController)
         }
         composable<OpenPlayListRoute> {
             ListPlaylistScreen(navController)
